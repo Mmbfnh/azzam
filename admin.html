@@ -12,75 +12,432 @@
   <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-  <header class="admin-topbar animated fadeInDown">
-    <h1>لوحة التحكم</h1>
-    <nav class="admin-actions">
-      <a href="index.html" class="btn btn-outline">⬅️ العودة للتطبيق</a>
-    </nav>
-  </header>
+  <!-- شاشة التحميل أثناء التحقق من الصلاحيات -->
+  <div id="loadingScreen" style="display: flex; align-items: center; justify-content: center; height: 100vh; background: white;">
+    <div style="text-align: center;">
+      <div style="width: 50px; height: 50px; border: 5px solid #E5E7EB; border-top-color: #2563EB; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+      <p style="color: #6B7280;">جاري التحقق من الصلاحيات...</p>
+    </div>
+  </div>
 
-  <main class="admin-main">
-    <section style="padding:12px 0;border-bottom:1px solid #E5E7EB">
-      <h2>إعدادات عامة</h2>
-      <div class="list-actions">
-        <div class="btn-group" id="soundGroup" role="group" aria-label="إعدادات الصوت">
-          <button id="soundOn"  class="btn btn-subtle" aria-pressed="false">صوت: تشغيل</button>
-          <button id="soundOff" class="btn btn-subtle" aria-pressed="true">صوت: إيقاف</button>
+  <!-- المحتوى الفعلي (مخفي في البداية) -->
+  <div id="adminContent" style="display: none;">
+    <header class="admin-topbar animated fadeInDown">
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <h1 style="margin: 0;">لوحة التحكم</h1>
+        <span id="userBadge" class="user-badge" style="background: #2563EB; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px;"></span>
+      </div>
+      <nav class="admin-actions">
+        <a href="index.html" class="btn btn-outline">🏠 الرئيسية</a>
+        <button id="logoutBtn" class="btn btn-subtle">🚪 تسجيل الخروج</button>
+      </nav>
+    </header>
+
+    <main class="admin-main">
+      <!-- قسم إدارة المستخدمين (للمسؤولين فقط) -->
+      <section id="usersSection" class="hidden" style="padding:12px 0;border-bottom:1px solid #E5E7EB;margin-bottom:20px;">
+        <h2>👥 إدارة المستخدمين</h2>
+        <div class="list-actions">
+          <button id="changePasswordBtn" class="btn btn-primary">تغيير كلمة المرور</button>
+          <button id="addUserBtn" class="btn btn-success">إضافة مستخدم جديد</button>
+        </div>
+        <div id="usersList" class="items-list" style="margin-top: 20px;"></div>
+      </section>
+
+      <!-- قسم إدارة الملفات -->
+      <section style="padding:12px 0;border-bottom:1px solid #E5E7EB;margin-bottom:20px;">
+        <h2>🗂️ إدارة الملفات</h2>
+        <div class="list-actions">
+          <label class="btn btn-primary" style="cursor:pointer">
+            📁 رفع ملف البيانات
+            <input type="file" id="adminFileUpload" accept=".json" style="display:none">
+          </label>
+          <button id="adminSaveFile" class="btn btn-success">💾 حفظ البيانات إلى ملف</button>
+          <button id="adminUseDefaults" class="btn btn-outline">🔄 استخدام البيانات الافتراضية</button>
+          <button id="backupData" class="btn btn-subtle">💾 نسخة احتياطية</button>
+        </div>
+        <div id="fileInfo" style="margin-top:10px;color:#666;font-size:0.9rem;"></div>
+      </section>
+
+      <!-- قسم الإعدادات العامة -->
+      <section style="padding:12px 0;border-bottom:1px solid #E5E7EB;margin-bottom:20px;">
+        <h2>⚙️ إعدادات عامة</h2>
+        <div class="list-actions">
+          <div class="btn-group" id="soundGroup" role="group" aria-label="إعدادات الصوت">
+            <button id="soundOn" class="btn btn-subtle" aria-pressed="false">🔊 صوت: تشغيل</button>
+            <button id="soundOff" class="btn btn-subtle" aria-pressed="true">🔇 صوت: إيقاف</button>
+          </div>
+          <button id="toggleAnimations" class="btn btn-subtle">✨ تفعيل/إيقاف الحركات</button>
+          <button id="resetSettings" class="btn btn-outline">🔄 إعادة تعيين الإعدادات</button>
+        </div>
+        
+        <!-- إحصائيات الاستخدام (للمسؤولين فقط) -->
+        <div id="statsSection" class="hidden" style="margin-top: 20px; background: #F9FAFB; padding: 20px; border-radius: 12px;">
+          <h3>📊 إحصائيات الاستخدام</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+            <div style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 24px; font-weight: 700; color: #2563EB;">0</div>
+              <div style="color: #6B7280; font-size: 14px;">عدد البطاقات</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 24px; font-weight: 700; color: #10B981;">0</div>
+              <div style="color: #6B7280; font-size: 14px;">مرات التشغيل</div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 10px; border: 1px solid #E5E7EB;">
+              <div style="font-size: 24px; font-weight: 700; color: #F59E0B;">0%</div>
+              <div style="color: #6B7280; font-size: 14px;">معدل النجاح</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="admin-grid">
+        <section>
+          <h2>➕ إضافة/تعديل عنصر</h2>
+          <form id="adminForm" class="form">
+            <label>🏷️ المعرّف (ID)
+              <input type="text" id="f_id" placeholder="مثل: spoon" required />
+            </label>
+            <label>🇬🇧 الاسم (English)
+              <input type="text" id="f_en" placeholder="Spoon" required />
+            </label>
+            <label>🇸🇦 الاسم (العربية)
+              <input type="text" id="f_ar" placeholder="ملعقة" required />
+            </label>
+            <label>🖼️ رابط الصورة (URL)
+              <input type="url" id="f_img" placeholder="https://... أو اتركه فارغًا عند استخدام ملف" />
+            </label>
+            <label>📤 رفع صورة (ملف)
+              <input type="file" id="f_file" accept="image/*" />
+              <small style="color: #6B7280; display: block; margin-top: 5px;">الحجم الأقصى: 2MB - الصيغ المدعومة: PNG, JPG, GIF</small>
+            </label>
+            
+            <!-- فئات التصنيف (جديد) -->
+            <label>📂 الفئة
+              <select id="f_category" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 12px; margin-top: 5px;">
+                <option value="عام">عام</option>
+                <option value="مطبخ">مطبخ</option>
+                <option value="مدرسة">مدرسة</option>
+                <option value="حيوانات">حيوانات</option>
+                <option value="ألوان">ألوان</option>
+                <option value="أرقام">أرقام</option>
+              </select>
+            </label>
+            
+            <!-- مستوى الصعوبة (جديد) -->
+            <label>⭐ مستوى الصعوبة
+              <div style="display: flex; gap: 10px; margin-top: 5px;">
+                <label style="display: flex; align-items: center; gap: 5px;">
+                  <input type="radio" name="difficulty" value="1" checked> سهل
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px;">
+                  <input type="radio" name="difficulty" value="2"> متوسط
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px;">
+                  <input type="radio" name="difficulty" value="3"> صعب
+                </label>
+              </div>
+            </label>
+            
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">💾 حفظ العنصر</button>
+              <button type="button" id="clearForm" class="btn btn-ghost">🗑️ تفريغ النموذج</button>
+              <button type="button" id="duplicateBtn" class="btn btn-subtle">📋 نسخ العنصر</button>
+            </div>
+            <div id="formMsg" class="msg"></div>
+          </form>
+          <div class="preview">
+            <h3>👀 معاينة</h3>
+            <img id="adminPreview" class="figure" src="" alt="preview" />
+            <div id="previewInfo" style="margin-top: 10px; font-size: 14px; color: #6B7280;"></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>📋 العناصر الحالية</h2>
+          <div class="list-actions">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="text" id="searchItems" placeholder="🔍 بحث عن عنصر..." style="padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 8px; width: 200px;">
+              <select id="filterCategory" style="padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 8px;">
+                <option value="">جميع الفئات</option>
+                <option value="عام">عام</option>
+                <option value="مطبخ">مطبخ</option>
+                <option value="مدرسة">مدرسة</option>
+              </select>
+              <select id="sortItems" style="padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 8px;">
+                <option value="name_asc">الاسم (أ-ي)</option>
+                <option value="name_desc">الاسم (ي-أ)</option>
+                <option value="date_new">الأحدث أولاً</option>
+                <option value="date_old">الأقدم أولاً</option>
+              </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button id="exportJson" class="btn btn-success">📤 تصدير JSON</button>
+              <label class="import-label btn btn-outline" style="cursor:pointer">
+                📥 استيراد JSON
+                <input type="file" id="importJson" accept="application/json" />
+              </label>
+              <button id="resetDefaults" class="btn btn-danger">🔄 الرجوع للوضع الافتراضي</button>
+            </div>
+          </div>
+          
+          <!-- إحصائيات سريعة -->
+          <div style="display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap;">
+            <span style="background: #F3F4F6; padding: 5px 10px; border-radius: 20px; font-size: 14px;">المجموع: <strong id="totalItems">0</strong></span>
+            <span style="background: #DBEAFE; padding: 5px 10px; border-radius: 20px; font-size: 14px;">العربية: <strong id="arItems">0</strong></span>
+            <span style="background: #D1FAE5; padding: 5px 10px; border-radius: 20px; font-size: 14px;">الإنجليزية: <strong id="enItems">0</strong></span>
+            <span style="background: #FEF3C7; padding: 5px 10px; border-radius: 20px; font-size: 14px;">بصور: <strong id="withImages">0</strong></span>
+          </div>
+          
+          <ul id="itemsList" class="items-list"></ul>
+          
+          <!-- تنقل الصفحات -->
+          <div id="pagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px; display: none;">
+            <button class="btn btn-subtle page-btn" data-page="prev">السابق</button>
+            <div id="pageNumbers" style="display: flex; gap: 5px;"></div>
+            <button class="btn btn-subtle page-btn" data-page="next">التالي</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="admin-footer">
+      <small><span id="currentDate"></span></small>
+    </footer>
+  </div>
+
+  <!-- نمط CSS إضافي -->
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .user-badge {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    
+    .user-badge.admin {
+      background: #2563EB;
+      color: white;
+    }
+    
+    .user-badge.guest {
+      background: #6B7280;
+      color: white;
+    }
+    
+    .user-badge.editor {
+      background: #10B981;
+      color: white;
+    }
+    
+    .item-card {
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .item-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .item-tags {
+      display: flex;
+      gap: 5px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .item-tag {
+      background: #E5E7EB;
+      color: #4B5563;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+    
+    .item-tag.category {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+    
+    .item-tag.difficulty-1 {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+    
+    .item-tag.difficulty-2 {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+    
+    .item-tag.difficulty-3 {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+    
+    /* نماذج منبثقة */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: fadeInUp 0.3s ease;
+    }
+    
+    .modal h2 {
+      margin-top: 0;
+      color: #111827;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+    
+    /* تأثيرات التحقق */
+    .shake {
+      animation: shake 0.5s ease;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    /* تخصيص شريط التمرير */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #F3F4F6;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #9CA3AF;
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6B7280;
+    }
+  </style>
+
+  <!-- النماذج المنبثقة -->
+  <div id="changePasswordModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>تغيير كلمة المرور</h2>
+      <form id="passwordForm">
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600;">كلمة المرور الحالية</label>
+          <input type="password" id="currentPassword" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px;" required>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600;">كلمة المرور الجديدة</label>
+          <input type="password" id="newPassword" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px;" required>
+          <small style="color: #6B7280; display: block; margin-top: 5px;">يجب أن تحتوي على 6 أحرف على الأقل</small>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600;">تأكيد كلمة المرور الجديدة</label>
+          <input type="password" id="confirmPassword" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px;" required>
+        </div>
+        <div id="passwordError" style="color: #DC2626; margin-bottom: 15px; display: none;"></div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">💾 حفظ التغييرات</button>
+          <button type="button" id="cancelPassword" class="btn btn-subtle">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="userModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>إضافة مستخدم جديد</h2>
+      <form id="userForm">
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600;">اسم المستخدم</label>
+          <input type="text" id="newUsername" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px;" required>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600;">كلمة المرور</label>
+          <input type="password" id="newUserPassword" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px;" required>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: 600;">الصلاحية</label>
+          <select id="userRole" style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px;">
+            <option value="editor">محرر (يمكنه التعديل فقط)</option>
+            <option value="admin">مسؤول (صلاحيات كاملة)</option>
+          </select>
+        </div>
+        <div id="userError" style="color: #DC2626; margin-bottom: 15px; display: none;"></div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">➕ إضافة المستخدم</button>
+          <button type="button" id="cancelUser" class="btn btn-subtle">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="backupModal" class="modal-overlay hidden">
+    <div class="modal">
+      <h2>💾 النسخ الاحتياطي</h2>
+      <div style="margin-bottom: 20px;">
+        <p>يمكنك إنشاء نسخة احتياطية من جميع البيانات والإعدادات:</p>
+        <div style="background: #F9FAFB; padding: 15px; border-radius: 10px; margin-top: 15px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <span>البيانات الحالية</span>
+            <button id="backupNow" class="btn btn-success" style="padding: 5px 10px; font-size: 14px;">تنزيل النسخة</button>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span>الإعدادات</span>
+            <button id="backupSettings" class="btn btn-outline" style="padding: 5px 10px; font-size: 14px;">تنزيل الإعدادات</button>
+          </div>
         </div>
       </div>
-    </section>
-
-    <div class="admin-grid">
-      <section>
-        <h2>إضافة/تعديل عنصر</h2>
-        <form id="adminForm" class="form">
-          <label>المعرّف (ID)
-            <input type="text" id="f_id" placeholder="مثل: spoon" required />
-          </label>
-          <label>الاسم (English)
-            <input type="text" id="f_en" placeholder="Spoon" required />
-          </label>
-          <label>الاسم (العربية)
-            <input type="text" id="f_ar" placeholder="ملعقة" required />
-          </label>
-          <label>رابط الصورة (URL)
-            <input type="url" id="f_img" placeholder="https://... أو اتركه فارغًا عند استخدام ملف" />
-          </label>
-          <label>رفع صورة (ملف)
-            <input type="file" id="f_file" accept="image/*" />
-          </label>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">حفظ</button>
-            <button type="button" id="clearForm" class="btn btn-ghost">تفريغ</button>
-          </div>
-          <div id="formMsg" class="msg"></div>
-        </form>
-        <div class="preview">
-          <h3>معاينة</h3>
-          <img id="adminPreview" class="figure" src="assets/spoon.png" alt="preview" />
-        </div>
-      </section>
-
-      <section>
-        <h2>العناصر الحالية</h2>
-        <div class="list-actions">
-          <button id="exportJson" class="btn btn-success">تصدير JSON</button>
-          <label class="import-label btn btn-outline" style="cursor:pointer">
-            استيراد JSON
-            <input type="file" id="importJson" accept="application/json" />
-          </label>
-          <button id="resetDefaults" class="btn btn-danger">الرجوع للوضع الافتراضي</button>
-        </div>
-        <ul id="itemsList" class="items-list"></ul>
-      </section>
+      <div style="margin-bottom: 20px;">
+        <h3>استعادة نسخة احتياطية</h3>
+        <label class="btn btn-subtle" style="cursor:pointer; display: inline-block; margin-top: 10px;">
+          📁 اختيار ملف النسخة
+          <input type="file" id="restoreBackup" accept=".json,.backup" style="display:none">
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="closeBackup" class="btn btn-primary">إغلاق</button>
+      </div>
     </div>
-  </main>
+  </div>
 
-  <footer class="admin-footer">
-    <small>يتم حفظ العناصر على جهازك باستخدام LocalStorage.</small>
-  </footer>
-
-  <script>const DEFAULT_ITEMS = [{"id": "waiter", "en": "Waiter", "ar": "النادل"}, {"id": "strawberries", "en": "Strawberries", "ar": "فراولة"}, {"id": "biscuits", "en": "Biscuits", "ar": "بسكويت"}, {"id": "spoon", "en": "Spoon", "ar": "ملعقة"}, {"id": "napkin", "en": "Napkin", "ar": "منديل"}, {"id": "fork", "en": "Fork", "ar": "شوكة"}, {"id": "knife", "en": "Knife", "ar": "سكين"}, {"id": "pepper", "en": "Pepper", "ar": "فلفل"}, {"id": "salt", "en": "Salt", "ar": "ملح"}, {"id": "chopsticks", "en": "Chopsticks", "ar": "عيدان أكل"}];</script>
+  <script>
+    const DEFAULT_ITEMS = [{"id": "waiter", "en": "Waiter", "ar": "النادل"}, {"id": "strawberries", "en": "Strawberries", "ar": "فراولة"}, {"id": "biscuits", "en": "Biscuits", "ar": "بسكويت"}, {"id": "spoon", "en": "Spoon", "ar": "ملعقة"}, {"id": "napkin", "en": "Napkin", "ar": "منديل"}, {"id": "fork", "en": "Fork", "ar": "شوكة"}, {"id": "knife", "en": "Knife", "ar": "سكين"}, {"id": "pepper", "en": "Pepper", "ar": "فلفل"}, {"id": "salt", "en": "Salt", "ar": "ملح"}, {"id": "chopsticks", "en": "Chopsticks", "ar": "عيدان أكل"}];
+  </script>
+  
+  <!-- سيتم تعديل admin.js في الملف التالي -->
   <script src="admin.js"></script>
 </body>
 </html>
