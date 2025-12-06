@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تسجيل الدخول - لوحة التحكم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="bootstrap.css" />
+  <link rel="stylesheet" href="animate.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --login-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+    }
+    
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--login-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      font-family: 'Tajawal', sans-serif;
+    }
+    
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      animation: fadeInUp 0.8s ease;
+    }
+    
+    .login-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .login-header h1 {
+      color: #2563EB;
+      margin: 0 0 10px 0;
+      font-size: 28px;
+    }
+    
+    .login-header p {
+      color: #6B7280;
+      margin: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #E5E7EB;
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: 'Tajawal', sans-serif;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #2563EB;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .btn-login {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-top: 10px;
+    }
+    
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-login:active {
+      transform: translateY(0);
+    }
+    
+    .login-footer {
+      text-align: center;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #E5E7EB;
+      color: #6B7280;
+      font-size: 14px;
+    }
+    
+    .error-message {
+      background: #FEE2E2;
+      color: #DC2626;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+    
+    .success-message {
+      background: #D1FAE5;
+      color: #059669;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+    
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: white;
+    }
+    
+    .guest-login {
+      margin-top: 15px;
+      text-align: center;
+    }
+    
+    .guest-login button {
+      background: transparent;
+      border: none;
+      color: #2563EB;
+      cursor: pointer;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 14px;
+      text-decoration: underline;
+    }
+    
+    .guest-login button:hover {
+      color: #1E40AF;
+    }
+    
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 30px 20px;
+      }
+      
+      .login-header h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card animated fadeInUp">
+      <div class="logo">🔐</div>
+      
+      <div class="login-header">
+        <h1>لوحة التحكم</h1>
+        <p>الرجاء إدخال بيانات الدخول للمتابعة</p>
+      </div>
+      
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">اسم المستخدم</label>
+          <input type="text" id="username" class="form-control" placeholder="أدخل اسم المستخدم" required autofocus>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">كلمة المرور</label>
+          <input type="password" id="password" class="form-control" placeholder="أدخل كلمة المرور" required>
+        </div>
+        
+        <button type="submit" class="btn btn-login">تسجيل الدخول</button>
+      </form>
+      
+      <div class="guest-login">
+        <button type="button" id="guestLogin">الدخول كزائر (مشاهدة فقط)</button>
+      </div>
+      
+      <div class="login-footer">
+        <p>كلمة المرور الافتراضية: admin / 1234</p>
+        <small>يمكن تغييرها من داخل لوحة التحكم</small>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // بيانات تسجيل الدخول الافتراضية
+    const DEFAULT_CREDENTIALS = {
+      username: 'admin',
+      password: '1234'
+    };
+    
+    // تحميل بيانات المستخدم من localStorage أو استخدام الافتراضية
+    function loadCredentials() {
+      try {
+        const saved = localStorage.getItem('adminCredentials');
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch (e) {
+        console.error('خطأ في تحميل بيانات الدخول:', e);
+      }
+      return DEFAULT_CREDENTIALS;
+    }
+    
+    // حفظ بيانات المستخدم في localStorage
+    function saveCredentials(username, password) {
+      try {
+        localStorage.setItem('adminCredentials', JSON.stringify({ username, password }));
+      } catch (e) {
+        console.error('خطأ في حفظ بيانات الدخول:', e);
+      }
+    }
+    
+    // تحقق من صحة بيانات الدخول
+    function validateLogin(username, password) {
+      const credentials = loadCredentials();
+      return username === credentials.username && password === credentials.password;
+    }
+    
+    // عرض رسالة خطأ
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      document.getElementById('successMessage').style.display = 'none';
+      
+      // إخفاء الرسالة بعد 5 ثوانٍ
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
+    
+    // عرض رسالة نجاح
+    function showSuccess(message) {
+      const successDiv = document.getElementById('successMessage');
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+      document.getElementById('errorMessage').style.display = 'none';
+      
+      // إخفاء الرسالة بعد 3 ثوانٍ
+      setTimeout(() => {
+        successDiv.style.display = 'none';
+      }, 3000);
+    }
+    
+    // التعامل مع إرسال النموذج
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      
+      if (!username || !password) {
+        showError('الرجاء إدخال اسم المستخدم وكلمة المرور');
+        return;
+      }
+      
+      if (validateLogin(username, password)) {
+        showSuccess('تم الدخول بنجاح! يتم التوجيه...');
+        
+        // حفظ حالة الدخول
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole', 'admin');
+        localStorage.setItem('currentUser', username);
+        
+        // الانتقال إلى لوحة التحكم بعد تأخير بسيط
+        setTimeout(() => {
+          window.location.href = 'admin.html';
+        }, 1000);
+      } else {
+        showError('اسم المستخدم أو كلمة المرور غير صحيحة');
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+      }
+    });
+    
+    // الدخول كزائر
+    document.getElementById('guestLogin').addEventListener('click', function() {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userRole', 'guest');
+      localStorage.setItem('currentUser', 'زائر');
+      
+      showSuccess('تم الدخول كزائر - الصلاحيات محدودة');
+      
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 1000);
+    });
+    
+    // التحقق التلقائي من حالة الدخول
+    window.addEventListener('load', function() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const userRole = localStorage.getItem('userRole');
+      
+      if (isLoggedIn === 'true' && userRole === 'admin') {
+        // إذا كان مسجلاً دخول كمسؤول، الانتقال مباشرة
+        window.location.href = 'admin.html';
+      } else if (isLoggedIn === 'true' && userRole === 'guest') {
+        // إذا كان زائراً، عرض خيار الدخول كزائر
+        document.getElementById('guestLogin').click();
+      }
+    });
+  </script>
+</body>
+</html>
