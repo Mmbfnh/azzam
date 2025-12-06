@@ -293,3 +293,59 @@ showSection(cardsMode);
 // لا نقوم بتحميل أي بيانات تلقائياً
 render(); 
 updateTimerDisplay();
+
+// === تتبع الإحصائيات ===
+function trackUsage(activity) {
+  try {
+    const stats = JSON.parse(localStorage.getItem('appStats') || '{}');
+    const today = new Date().toISOString().split('T')[0];
+    
+    if (!stats[today]) {
+      stats[today] = {
+        plays: 0,
+        matches: 0,
+        letters: 0,
+        successes: 0,
+        total: 0
+      };
+    }
+    
+    stats[today][activity] = (stats[today][activity] || 0) + 1;
+    stats[today].total = stats[today].total + 1;
+    
+    localStorage.setItem('appStats', JSON.stringify(stats));
+  } catch (e) {
+    console.error('خطأ في تتبع الإحصائيات:', e);
+  }
+}
+
+// تحديث الإحصائيات عند بدء اللعبة
+function updateGameStats() {
+  trackUsage('plays');
+  
+  // تحديث إحصائيات البطاقات
+  const cardStats = JSON.parse(localStorage.getItem('cardStats') || '{}');
+  ITEMS.forEach(item => {
+    if (!cardStats[item.id]) {
+      cardStats[item.id] = {
+        views: 0,
+        flips: 0,
+        plays: 0,
+        success: 0
+      };
+    }
+  });
+  localStorage.setItem('cardStats', JSON.stringify(cardStats));
+}
+
+// تسجيل نجاح في المطابقة
+function recordMatchSuccess() {
+  trackUsage('matches');
+  trackUsage('successes');
+}
+
+// تسجيل نجاح في لعبة الحروف
+function recordLettersSuccess() {
+  trackUsage('letters');
+  trackUsage('successes');
+}
