@@ -1,0 +1,14 @@
+/* Minimal Bootstrap-like subset */
+.container{margin-right:auto;margin-left:auto;padding-left:15px;padding-right:15px}
+@media (min-width:768px){.container{width:750px}}
+@media (min-width:992px){.container{width:970px}}
+@media (min-width:1200px){.container{width:1170px}}
+.row{margin-left:-15px;margin-right:-15px}
+.row::before,.row::after{content:" ";display:table}.row::after{clear:both}
+[class*="col-"]{position:relative;min-height:1px;padding-left:15px;padding-right:15px}
+.col-sm-4,.col-sm-8{float:right}
+@media (min-width:768px){.col-sm-4{width:33.3333%}.col-sm-8{width:66.6667%}}
+.text-right{text-align:right}.text-left{text-align:left}
+.btn-group{position:relative;display:inline-block;vertical-align:middle}
+.btn-group>.btn{position:relative;float:right}
+.btn-group .btn+.btn{margin-right:-1px}

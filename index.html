@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>بطاقات تفاعلية</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="bootstrap.css" />
+  <link rel="stylesheet" href="animate.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar animated fadeInDown">
+    <h1>بطاقات تفاعلية</h1>
+    <div class="controls">
+      <a class="btn btn-outline" href="admin.html" id="adminBtn" aria-label="لوحة التحكم">لوحة التحكم</a>
+      <button id="homeBtn" class="btn btn-subtle" aria-label="الشاشة الرئيسية">الشاشة الرئيسية</button>
+      <button id="testsBtn" class="btn btn-primary" aria-label="الاختبارات">الاختبارات</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="cardsMode">
+      <div class="cards-toolbar">
+        <label class="toggle" style="display:flex;align-items:center;gap:8px">
+          <span>اللغة:</span>
+          <select id="langSelect">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <button id="toggleNames" class="btn">إظهار/إخفاء الأسماء</button>
+        <button id="shuffleBtn" class="btn">عشوائي</button>
+        <button id="resetBtn" class="btn">إعادة الترتيب</button>
+      </div>
+      <div id="cardsGrid" class="grid"></div>
+    </section>
+
+    <section id="testsHub" class="hidden">
+      <div class="container" style="padding:20px">
+        <h2>الاختبارات</h2>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button id="goMatch" class="btn btn-primary">مطابقة</button>
+          <button id="goLetters" class="btn btn-outline">حروف</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="matchMode" class="hidden">
+      <div class="container">
+        <div class="row match-toolbar">
+          <div class="col-sm-8 match-left">
+            <div id="matchScore">النتيجة: 0/0</div>
+            <div class="match-status">
+              <span id="levelLabel">المستوى:</span>
+              <select id="levelSelect"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+              <span id="matchTimer">⏱️ 01:00</span>
+              <button id="timerStart" class="btn btn-success">بدء</button>
+              <button id="timerPause" class="btn btn-outline">إيقاف</button>
+            </div>
+          </div>
+          <div class="col-sm-4 match-actions text-right">
+            <button id="matchShuffle" class="btn btn-subtle">عشوائي الكلمات</button>
+            <button id="matchReset" class="btn btn-outline">إعادة</button>
+            <button id="matchCheck" class="btn btn-primary">تحقق</button>
+          </div>
+        </div>
+        <div class="row match-layout">
+          <div class="col-sm-8"><div id="matchImages" class="match-images"></div></div>
+          <div class="col-sm-4"><div id="matchWords" class="match-words"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lettersMode" class="hidden">
+      <div class="letters-toolbar">
+        <div class="letters-left">
+          <div id="lettersScore">0 / 0</div>
+          <div class="letters-status">
+            <span id="lettersLabel">الكلمة:</span>
+            <select id="lettersSelect" class="hidden"></select>
+            <button id="lettersNew" class="btn btn-subtle">كلمة عشوائية</button>
+            <button id="lettersReset" class="btn btn-outline">إعادة</button>
+            <button id="lettersCheck" class="btn btn-primary">تحقق</button>
+          </div>
+        </div>
+      </div>
+      <div class="letters-layout">
+        <div class="letters-image"><img id="lettersFigure" class="figure" src="" alt="" /></div>
+        <div class="letters-slots" id="lettersSlots"></div>
+        <div class="letters-bank" id="lettersBank"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><p>انقر على البطاقة لقلبها. جرّب قسم الاختبارات للمطابقة وبناء الحروف!</p></footer>
+
+  <script>const DEFAULT_ITEMS = [{"id": "waiter", "en": "Waiter", "ar": "النادل"}, {"id": "strawberries", "en": "Strawberries", "ar": "فراولة"}, {"id": "biscuits", "en": "Biscuits", "ar": "بسكويت"}, {"id": "spoon", "en": "Spoon", "ar": "ملعقة"}, {"id": "napkin", "en": "Napkin", "ar": "منديل"}, {"id": "fork", "en": "Fork", "ar": "شوكة"}, {"id": "knife", "en": "Knife", "ar": "سكين"}, {"id": "pepper", "en": "Pepper", "ar": "فلفل"}, {"id": "salt", "en": "Salt", "ar": "ملح"}, {"id": "chopsticks", "en": "Chopsticks", "ar": "عيدان أكل"}];</script>
+  <script src="script.js"></script>
+</body>
+</html>

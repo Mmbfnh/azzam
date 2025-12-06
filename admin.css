@@ -1,0 +1,32 @@
+/* Admin (v3): add sound settings, ripple hidden */
+:root{--ripple-duration:.50s}
+*{box-sizing:border-box}
+.hidden{display:none !important}
+body{margin:0;font-family:"Tajawal","Nunito","Segoe UI",Tahoma,Arial,"Noto Sans Arabic",sans-serif;background:#ffffff;color:#111827}
+.admin-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#ffffff;border-bottom:1px solid #E5E7EB}
+.admin-actions .btn{border-radius:12px;padding:10px 14px;text-decoration:none;font-weight:600}
+.admin-main{padding:20px}
+.admin-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+.form label{display:block;margin:10px 0;font-weight:600}
+.form input{width:100%;padding:10px;border:1px solid #E5E7EB;border-radius:12px}
+.form-actions{display:flex;gap:10px;margin-top:10px}
+.btn{background:#2563EB;color:#fff;border:none;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:600;box-shadow:0 6px 18px rgba(37,99,235,.15)}
+.btn.ghost{background:transparent;color:#111827;border:1px solid #E5E7EB}
+.btn-outline{background:#fff;color:#2563EB;border:1px solid #2563EB}
+.btn-outline:hover{background:rgba(37,99,235,.06)}
+.btn-success{background:#10B981;color:#fff;border:1px solid #10B981}
+.btn-danger{background:#EF4444;color:#fff;border:1px solid #EF4444}
+.btn-subtle{background:#F3F4F6;color:#111827;border:1px solid #E5E7EB}
+.btn-subtle:hover{background:#E5E7EB}
+.ripple{display:none !important}
+.msg{margin-top:8px;font-size:.95rem;color:#6B7280}
+.preview{margin-top:12px}
+.figure{max-width:240px;max-height:240px;object-fit:contain;border:1px solid #E5E7EB;border-radius:12px;padding:8px;background:#FAFAFA}
+.list-actions{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.items-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.item-card{border:1px solid #E5E7EB;border-radius:14px;padding:12px;background:#FFFFFF;display:flex;gap:12px;align-items:center;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.item-card img{width:72px;height:72px;object-fit:contain;border-radius:10px;background:#fff;border:1px solid #E5E7EB}
+.item-meta{flex:1}
+.item-actions{display:flex;gap:8px}
+.import-label input{display:none}
+.admin-footer{padding:14px 20px;text-align:center;color:#6B7280;border-top:1px solid #E5E7EB}
